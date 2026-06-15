@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= barbearia.nome %> - Agendamento Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300 antialiased font-sans flex flex-col min-h-screen">
+
+    <%- include('../partials/navbar_cliente') %>
+
+    <header class="relative bg-blue-900 dark:bg-black text-white py-20 px-4 text-center bg-cover bg-center overflow-hidden"
+        <% if (barbearia.banner) { %> style="background-image: url('<%= barbearia.banner %>');" <% } %>>
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-blue-900/50 mix-blend-multiply"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent"></div>
+        
+        <div class="max-w-3xl mx-auto relative z-10 animate-slide-up">
+            
+            <% if (barbearia.foto_perfil) { %>
+                <div class="relative inline-block mb-6">
+                    <div class="absolute inset-0 bg-white/20 rounded-full blur-lg animate-pulse"></div>
+                    <img src="<%= barbearia.foto_perfil %>" class="relative w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto border-[6px] border-white/90 shadow-2xl object-cover">
+                </div>
+            <% } else { %>
+                <div class="w-28 h-28 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center text-5xl mx-auto mb-6 font-black shadow-2xl border-4 border-white/30">
+                    <%= barbearia.nome[0] %>
+                </div>
+            <% } %>
+            
+            <h2 class="text-4xl md:text-6xl font-black mb-4 tracking-tight drop-shadow-lg text-white"><%= barbearia.nome %></h2>
+            
+            <div class="inline-block bg-black/30 backdrop-blur-md rounded-2xl p-4 md:p-6 mb-8 border border-white/10 shadow-xl max-w-xl mx-auto">
+                <p class="text-blue-50 dark:text-gray-300 text-base md:text-lg font-medium leading-relaxed">
+                    <%= barbearia.descricao || 'Conveniência e estilo no mesmo lugar. Escolha o seu serviço e reserve o seu horário em poucos segundos.' %>
+                </p>
+            </div>
+            <br>
+            
+            <% if (barbearia.telefone) { %>
+                <a href="https://wa.me/55<%= barbearia.telefone.replace(/\D/g, '') %>" target="_blank" class="inline-flex items-center space-x-2 bg-green-500 hover:bg-green-400 text-white px-8 py-4 rounded-xl font-black shadow-xl shadow-green-500/20 transition-all hover:-translate-y-1 hover:shadow-green-500/40">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Falar no WhatsApp</span>
+                </a>
+            <% } %>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-16 space-y-20 animate-slide-up" style="animation-delay: 0.1s;">
+
+        <section>
+            <div class="flex items-center mb-10 gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <h3 class="text-3xl font-black text-gray-800 dark:text-white">Nossos Serviços</h3>
+            </div>
+            
+            <% if (servicos.length === 0) { %>
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-12 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700 text-center">
+                    <i class="fa-solid fa-store-slash text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400 font-bold text-lg">Ainda estamos a preparar o nosso menu de serviços.</p>
+                </div>
+            <% } else { %>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <% servicos.forEach(s => { %>
+                        <div class="group bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between sm:items-center gap-6 transition-all duration-300 hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900/50 hover:-translate-y-1">
+                            
+                            <div class="flex-1">
+                                <h4 class="font-black text-xl text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2"><%= s.nome %></h4>
+                                <% if (s.descricao) { %>
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4 line-clamp-2"><%= s.descricao %></p>
+                                <% } %>
+                                <div class="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-900 rounded-lg text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    <i class="fa-regular fa-clock mr-1.5 text-blue-500"></i> <%= s.duracao_minutos %> min
+                                </div>
+                            </div>
+
+                            <div class="sm:text-right flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 sm:border-l border-gray-100 dark:border-gray-700 pt-4 sm:pt-0 sm:pl-6">
+                                <p class="font-black text-green-600 dark:text-green-400 text-2xl sm:mb-4">R$ <%= Number(s.preco).toFixed(2) %></p>
+                                <button onclick="abrirModalAgendamento('<%= s.id %>', '<%= s.nome %>', '<%= clienteLogado %>', '<%= s.preco %>')" class="bg-gray-900 hover:bg-blue-600 dark:bg-white dark:hover:bg-blue-500 dark:text-gray-900 text-white text-sm font-black py-3 px-6 rounded-xl shadow-md transition-all hover:scale-105 active:scale-95 flex items-center group-hover:shadow-blue-500/20">
+                                    Reservar <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </section>
+
+        <% if (typeof produtos !== 'undefined' && produtos.length > 0) { %>
+        <section>
+            <div class="flex items-center mb-10 gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+                <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-white">Nossos Produtos</h3>
+                    <p class="text-sm font-bold text-gray-500">Adicione ao seu agendamento e retire na loja.</p>
+                </div>
+            </div>
+            
+            <div class="flex overflow-x-auto gap-6 pb-6 snap-x hide-scrollbar">
+                <% produtos.forEach(p => { %>
+                    <div class="min-w-[220px] max-w-[220px] bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 snap-center hover:shadow-lg transition-all hover:-translate-y-1 group">
+                        <div class="w-full h-32 mb-4 bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100 dark:border-gray-700">
+                            <% if (p.imagem_url) { %>
+                                <img src="<%= p.imagem_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <% } else { %>
+                                <i class="fa-solid fa-box-open text-4xl text-gray-300 dark:text-gray-600"></i>
+                            <% } %>
+                        </div>
+                        <h4 class="font-black text-base text-gray-800 dark:text-white truncate" title="<%= p.nome %>"><%= p.nome %></h4>
+                        <p class="font-black text-indigo-600 dark:text-indigo-400 text-lg mt-1">R$ <%= Number(p.preco).toFixed(2) %></p>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+        <% } %>
+
+        <section>
+            <div class="flex items-center mb-10 gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+                <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h3 class="text-3xl font-black text-gray-800 dark:text-white">Os Especialistas</h3>
+            </div>
+            
+            <div class="flex overflow-x-auto gap-5 pb-6 snap-x hide-scrollbar">
+                <% equipe.forEach(membro => { %>
+                    <div class="min-w-[160px] bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 text-center snap-center hover:shadow-lg transition-all hover:-translate-y-1 group">
+                        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-900 rounded-full flex items-center justify-center text-3xl font-black text-gray-400 dark:text-gray-500 mb-4 shadow-inner border-2 border-white dark:border-gray-800 group-hover:scale-110 transition-transform">
+                            <%= membro.nome.charAt(0).toUpperCase() %>
+                        </div>
+                        <h4 class="font-black text-base text-gray-800 dark:text-white truncate" title="<%= membro.nome %>"><%= membro.nome %></h4>
+                        <div class="w-8 h-1 bg-amber-400 rounded-full mx-auto mt-2"></div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+
+        <% if (endereco && endereco.rua) { %>
+        <section>
+            <div class="flex items-center mb-10 gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+                <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <h3 class="text-3xl font-black text-gray-800 dark:text-white">Onde Estamos</h3>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col md:flex-row group">
+                <div class="p-8 md:p-10 md:w-5/12 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700 z-10 bg-white dark:bg-gray-800 shadow-[10px_0_15px_-3px_rgba(0,0,0,0.05)]">
+                    <h4 class="font-black text-2xl mb-6 text-gray-800 dark:text-white">Visite-nos</h4>
+                    
+                    <div class="space-y-3 text-gray-600 dark:text-gray-400 mb-8">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-building text-blue-500 mt-1"></i>
+                            <p class="font-bold text-gray-800 dark:text-gray-200 leading-snug"><%= endereco.rua %>, <%= endereco.numero %></p>
+                        </div>
+                        <div class="flex items-start gap-3 pl-7">
+                            <p class="font-medium"><%= endereco.bairro %></p>
+                        </div>
+                        <div class="flex items-start gap-3 pl-7">
+                            <p class="font-medium"><%= endereco.cidade %> - <%= endereco.uf %></p>
+                        </div>
+                        
+                        <% if (endereco.complemento) { %>
+                            <div class="mt-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-700 flex items-start gap-2">
+                                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                                <p class="text-xs font-medium italic"><%= endereco.complemento %></p>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <% const enderecoBusca = `${endereco.rua}, ${endereco.numero} - ${endereco.bairro}, ${endereco.cidade} - ${endereco.uf}`; %>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoBusca)}" target="_blank" class="inline-flex items-center justify-center w-full bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-black py-4 px-4 rounded-xl transition-all shadow-sm group-hover:shadow-blue-500/10">
+                        <i class="fa-solid fa-diamond-turn-right mr-2 text-lg"></i> Traçar Rota no Maps
+                    </a>
+                </div>
+                
+                <div class="md:w-7/12 h-80 md:h-auto relative bg-gray-200 dark:bg-gray-900 overflow-hidden">
+                    <div class="absolute inset-0 z-10 md:hover:hidden"></div>
+                    <iframe width="100%" height="100%" frameborder="0" style="border:0; position: absolute; top:0; left:0; filter: grayscale(15%) contrast(1.1);" allowfullscreen="" src="https://www.google.com/maps?q=<%= encodeURIComponent(endereco.rua + ', ' + endereco.numero + ', ' + endereco.cidade + ' - ' + endereco.uf) %>&output=embed"></iframe>
+                </div>
+            </div>
+        </section>
+        <% } %>
+
+    </main>
+
+    <%- include('../partials/footer_cliente') %>
+
+    <div id="modalAvisoLogin" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full mx-4 p-8 shadow-2xl text-center transform scale-95 transition-transform duration-300" id="modalAvisoLoginContent">
+            <div class="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner border-4 border-white dark:border-gray-800">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Acesso Necessário</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">Para garantir seu horário com segurança, identifique-se no sistema.</p>
+            
+            <div class="space-y-3">
+                <a href="/auth/login" class="flex justify-center items-center w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-blue-500/30">
+                    <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i> Fazer Login
+                </a>
+                
+                <div class="relative py-2">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-gray-700"></div></div>
+                    <div class="relative flex justify-center text-sm"><span class="px-2 bg-white dark:bg-gray-800 text-gray-400 font-bold uppercase tracking-wider text-[10px]">Novo Aqui?</span></div>
+                </div>
+                
+                <a href="/auth/cadastro" class="flex justify-center items-center w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-black py-4 rounded-xl transition-all shadow-sm">
+                    <i class="fa-solid fa-user-plus mr-2 text-sm"></i> Criar Conta Rápida
+                </a>
+                
+                <button onclick="toggleModal('modalAvisoLogin')" class="w-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold text-xs uppercase tracking-wider mt-4 p-2 transition-colors">Voltar para a vitrine</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAgendamentoCliente" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden flex flex-col max-h-[90vh]" id="modalAgendamentoClienteContent">
+            
+            <div class="bg-white dark:bg-gray-800 p-6 border-b border-gray-100 dark:border-gray-700 relative flex-shrink-0 z-10 shadow-sm">
+                <button onclick="toggleModal('modalAgendamentoCliente')" class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-500 dark:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="pr-10">
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-check text-blue-600"></i> Reservar Horário
+                    </h3>
+                    <p id="nomeServicoEscolhido" class="text-gray-500 dark:text-gray-400 font-bold text-sm mt-1 truncate"></p>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto p-6 flex-grow hide-scrollbar bg-gray-50 dark:bg-gray-900/30">
+                <form action="/agendar" method="POST" id="formAgendamento" class="space-y-6">
+                    <input type="hidden" id="inputBarbeariaId" value="<%= barbearia.id %>">
+                    <input type="hidden" id="inputServicoId" name="servico_id">
+                    <input type="hidden" id="inputDataHora" name="data_hora" required>
+                    <input type="hidden" id="inputCupomId" name="cupom_id">
+                    <input type="hidden" id="precoOriginalServico" value="0">
+                    <input type="hidden" id="descontoAtual" value="0">
+                    <input type="hidden" id="mpPublicKeyInput" value="<%= mpPublicKey || '' %>">
+
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-5">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] uppercase font-black text-gray-400 tracking-wider mb-2">1. Profissional</label>
+                                <select id="selectProfissional" name="colaborador_id" onchange="buscarHorarios()" required class="w-full p-3.5 text-sm font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                                    <option value="">Escolher...</option>
+                                    <% equipe.forEach(membro => { %>
+                                        <option value="<%= membro.id %>"><%= membro.nome %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase font-black text-gray-400 tracking-wider mb-2">2. Data</label>
+                                <input type="date" id="inputData" onchange="buscarHorarios()" required class="w-full p-3.5 text-sm font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-[10px] uppercase font-black text-gray-400 tracking-wider">3. Horário</label>
+                                <span id="loadingHorarios" class="hidden text-blue-500 text-xs font-bold"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Buscando...</span>
+                            </div>
+                            <div id="horariosDisponiveis" class="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto custom-scrollbar pr-1">
+                                <div class="col-span-4 text-center text-xs font-bold text-gray-400 py-6 bg-gray-50 dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">Preencha o passo 1 e 2.</div>
+                            </div>
+                        </div>
+
+                        <% if (typeof produtos !== 'undefined' && produtos.length > 0) { %>
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <label class="block text-[10px] uppercase font-black text-indigo-500 tracking-wider mb-2 flex items-center">
+                                <i class="fa-solid fa-bag-shopping mr-1.5"></i> Levar Produto? (Opcional)
+                            </label>
+                            <select id="selectProdutoCliente" name="id_produto" onchange="calcularTotalCliente()" class="w-full p-3.5 text-sm font-bold bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-200 dark:border-indigo-800/50 text-indigo-900 dark:text-indigo-300 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer">
+                                <option value="" data-preco="0">Não, apenas o serviço.</option>
+                                <% produtos.forEach(p => { %>
+                                    <option value="<%= p.id %>" data-preco="<%= p.preco %>"><%= p.nome %> (+ R$ <%= Number(p.preco).toFixed(2) %>)</option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-5">
+                        <div>
+                            <label class="block text-[10px] uppercase font-black text-gray-400 tracking-wider mb-2"><i class="fa-solid fa-wallet mr-1"></i> Forma de Pagamento</label>
+                            <select id="selectPagamento" name="forma_pagamento" onchange="verificarFormaPagamento()" required class="w-full p-3.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold transition-all cursor-pointer">
+                                <option value="" disabled selected>Escolha como pagar...</option>
+                                <% if(pagamentos && pagamentos.dinheiro) { %><option value="Dinheiro">Dinheiro (Acertar no local)</option><% } %>
+                                <% if(pagamentos && pagamentos.credito) { %><option value="Cartão de Crédito">Cartão Físico (Na maquininha)</option><% } %>
+                                <% if(pagamentos && pagamentos.debito) { %><option value="Cartão de Débito">Cartão Físico (Na maquininha)</option><% } %>
+                                <% if(mpPublicKey) { %><option value="app" class="font-black text-green-600 bg-green-50">Pagar Agora Online (Pix/Cartão)</option><% } %>
+                            </select>
+                        </div>
+
+                        <div id="paymentBrick_container" class="w-full hidden mt-2"></div>
+
+                        <div class="relative mt-4">
+                            <input type="text" id="inputCupomCodigo" placeholder="Tem código de desconto?" class="w-full p-3.5 pr-24 text-sm font-bold uppercase bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:normal-case placeholder:font-medium">
+                            <button type="button" onclick="aplicarCupom()" class="absolute right-1.5 top-1.5 bottom-1.5 px-5 bg-gray-800 hover:bg-black dark:bg-gray-600 dark:hover:bg-gray-500 text-white text-xs font-bold rounded-lg transition-colors shadow-sm">Aplicar</button>
+                        </div>
+                        <p id="msgCupom" class="text-xs font-bold px-1 hidden"></p>
+                    </div>
+
+                    <div class="flex justify-between items-end p-5 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-800/50 shadow-sm">
+                        <span class="text-xs font-black text-green-800 dark:text-green-500 uppercase tracking-wider">Total a Pagar</span>
+                        <div class="text-right">
+                            <span id="precoRiscado" class="text-sm font-bold line-through text-gray-400 hidden mr-1"></span>
+                            <span id="precoFinalExibicao" class="text-3xl font-black text-green-600 dark:text-green-400 transition-all duration-300 inline-block">R$ 0,00</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="p-5 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0 z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button type="submit" form="formAgendamento" id="btnConfirmar" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 dark:disabled:bg-gray-700 dark:disabled:text-gray-500 text-white font-black py-4 rounded-xl transition-all shadow-lg shadow-blue-500/30 disabled:shadow-none flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-calendar-check"></i> <span>Aguardando seleção...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalErroPagamento" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full mx-4 p-8 shadow-2xl text-center transform scale-95 transition-transform duration-300" id="modalErroPagamentoContent">
+            <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-inner border-4 border-white dark:border-gray-800">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Ops, algo falhou.</h3>
+            <p id="mensagemErroPagamento" class="text-gray-500 dark:text-gray-400 mb-8 font-medium text-sm"></p>
+            <button type="button" onclick="toggleModal('modalErroPagamento')" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-black py-3.5 rounded-xl transition-colors">Entendi, tentar novamente</button>
+        </div>
+    </div>
+
+    <div id="toastSucesso" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-500 translate-y-20 opacity-0 pointer-events-none z-[9999]">
+        <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs"><i class="fa-solid fa-check"></i></div>
+        <span class="font-black text-sm tracking-wide">Operação realizada com sucesso!</span>
+    </div>
+
+<script src="/js/home_cliente.js"></script>
+<script src="/js/theme.js"></script>
+</body>
+</html>

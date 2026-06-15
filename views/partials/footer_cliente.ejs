@@ -1,0 +1,54 @@
+<footer class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 mt-auto pt-16 pb-8 transition-colors duration-300 relative overflow-hidden">
+    
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+    <div class="max-w-5xl mx-auto px-4 relative z-10">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+            
+            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-blue-500/30 mb-5">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">
+                    <%= barbearia.nome %>
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 font-medium max-w-xs leading-relaxed text-sm">
+                    Conveniência, estilo e o melhor atendimento para você. O seu estilo é a nossa marca.
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center md:items-end justify-center md:justify-start">
+                <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-5">Acesso Rápido</h4>
+                <div class="flex flex-col gap-3 items-center md:items-end">
+                    <a href="/termos" target="_blank" class="text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group">
+                        <span class="group-hover:-translate-x-1 transition-transform">Termos de Uso</span> 
+                        <i class="fa-solid fa-arrow-right text-[10px] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-blue-500"></i>
+                    </a>
+                    <a href="/privacidade" target="_blank" class="text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group">
+                        <span class="group-hover:-translate-x-1 transition-transform">Política de Privacidade</span> 
+                        <i class="fa-solid fa-arrow-right text-[10px] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-blue-500"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <p class="text-xs font-bold text-gray-400 dark:text-gray-500 text-center md:text-left">
+                &copy; <%= new Date().getFullYear() %> <%= barbearia.nome %>. Todos os direitos reservados.
+            </p>
+            
+            <a href="#" target="_blank" title="Conheça a Solução Sob Medida" class="group flex items-center gap-2.5 px-4 py-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800/50 rounded-full transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 cursor-pointer">
+                <div class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                </div>
+                <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400">Tecnologia por</span>
+                <span class="text-xs font-black text-blue-600 dark:text-blue-400">Solução Sob Medida</span>
+            </a>
+
+        </div>
+        
+    </div>
+</footer>

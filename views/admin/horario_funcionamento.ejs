@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horários de Funcionamento - <%= barbearia.nome %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+    <%- include('../partials/sidebar') %>
+
+    <main class="p-4 md:p-8 max-w-6xl mx-auto w-full animate-slide-up">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl font-black text-gray-800 dark:text-white flex items-center">
+                    <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mr-3 text-blue-600">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    Horários de Expediente
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-14">Defina os dias e horas que a agenda online estará disponível.</p>
+            </div>
+            
+            <button type="submit" form="formHorarios" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition-transform hover:scale-105 flex justify-center items-center">
+                <i class="fa-solid fa-check mr-2"></i> Salvar Alterações
+            </button>
+        </div>
+
+        <form id="formHorarios" action="/admin/horario_funcionamento/salvar" method="POST">
+            
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar pb-2">
+                    <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300 min-w-[800px]">
+                        <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 uppercase text-[10px] font-black tracking-wider">
+                            <tr>
+                                <th class="py-4 px-6">Dia da Semana</th>
+                                <th class="py-4 px-4 text-center">Abertura</th>
+                                <th class="py-4 px-4 text-center">Fechamento</th>
+                                <th class="py-4 px-4 text-center">Pausa P/ Almoço</th>
+                                <th class="py-4 px-4 text-center">Volta do Almoço</th>
+                                <th class="py-4 px-6 text-center">É Folga?</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">
+                            <% for(let i = 0; i < 7; i++) { 
+                                // Busca se já existe dado para esse dia no array que veio do banco
+                                const h = horarios.find(item => item.dia_semana === i) || {};
+                            %>
+                                <tr class="item-horario transition-all duration-300 <%= h.folga ? 'bg-gray-50 dark:bg-gray-800 opacity-60 grayscale' : 'hover:bg-gray-50/50 dark:hover:bg-gray-700/30' %>">
+                                    
+                                    <td class="py-4 px-6 font-bold text-gray-800 dark:text-gray-200 text-base flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-black text-gray-500">
+                                            <%= diasNome[i].substring(0, 3).toUpperCase() %>
+                                        </div>
+                                        <%= diasNome[i] %>
+                                        <input type="hidden" name="dia" value="<%= i %>">
+                                    </td>
+                                    
+                                    <td class="py-4 px-4 text-center">
+                                        <div class="relative inline-block w-full max-w-[120px]">
+                                            <i class="fa-regular fa-sun absolute left-3 top-3 text-gray-400"></i>
+                                            <input type="time" name="abertura" value="<%= h.abertura || '09:00' %>" 
+                                                   class="w-full py-2.5 pl-10 pr-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 dark:text-gray-300 transition-colors" <%= h.folga ? 'readonly' : '' %>>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="py-4 px-4 text-center">
+                                        <div class="relative inline-block w-full max-w-[120px]">
+                                            <i class="fa-regular fa-moon absolute left-3 top-3 text-gray-400"></i>
+                                            <input type="time" name="fechamento" value="<%= h.fechamento || '19:00' %>" 
+                                                   class="w-full py-2.5 pl-10 pr-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-gray-700 dark:text-gray-300 transition-colors" <%= h.folga ? 'readonly' : '' %>>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="py-4 px-4 text-center">
+                                        <div class="relative inline-block w-full max-w-[120px]">
+                                            <i class="fa-solid fa-utensils absolute left-3 top-3 text-amber-500"></i>
+                                            <input type="time" name="almoco_inicio" value="<%= h.almoco_inicio || '12:00' %>" 
+                                                   class="w-full py-2.5 pl-10 pr-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-amber-200 dark:border-amber-900/50 focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700 dark:text-gray-300 transition-colors" <%= h.folga ? 'readonly' : '' %>>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="py-4 px-4 text-center">
+                                        <div class="relative inline-block w-full max-w-[120px]">
+                                            <i class="fa-solid fa-briefcase absolute left-3 top-3 text-amber-500"></i>
+                                            <input type="time" name="almoco_fim" value="<%= h.almoco_fim || '13:00' %>" 
+                                                   class="w-full py-2.5 pl-10 pr-2 rounded-xl bg-gray-50 dark:bg-gray-900 border border-amber-200 dark:border-amber-900/50 focus:ring-2 focus:ring-amber-500 outline-none font-bold text-gray-700 dark:text-gray-300 transition-colors" <%= h.folga ? 'readonly' : '' %>>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="py-4 px-6 text-center">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="folga" value="<%= i %>" <%= h.folga ? 'checked' : '' %> onchange="toggleDia(this)" class="sr-only peer">
+                                            <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-500 peer-checked:bg-red-500 shadow-inner"></div>
+                                        </label>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm flex items-start gap-4">
+                <div class="text-blue-500 text-2xl mt-1">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h4 class="text-blue-800 dark:text-blue-300 font-bold mb-1">Como a agenda funciona?</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        O sistema irá calcular automaticamente os horários disponíveis para o cliente com base no tempo de cada serviço. Se você não tem pausa para o almoço, basta colocar o início e o fim no mesmo horário (ex: 12:00 e 12:00). Dias marcados como <strong>Folga</strong> não aparecerão na vitrine.
+                    </p>
+                </div>
+            </div>
+            
+        </form>
+    </main>
+
+    <script src="/js/horario_admin.js"></script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

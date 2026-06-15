@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Solução Sob Medida SaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+    <nav class="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">CrieSobMedida - CEO</h1>
+        <div class="flex items-center space-x-4">
+            <span class="font-medium">Olá, <%= nome %></span>
+            <button id="theme-toggle" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                <span id="theme-icon">🌙</span>
+            </button>
+            <a href="/auth/logout" class="bg-red-500 text-white px-4 py-2 rounded-md font-bold text-sm">Sair</a>
+        </div>
+    </nav>
+
+    <main class="p-8">
+        <h2 class="text-3xl font-bold mb-6">Visão Global do Sistema</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-gray-500 dark:text-gray-400 font-semibold mb-2">Barbearias Ativas</h3>
+                <p class="text-4xl font-bold text-green-500"><%= totalBarbearias %></p>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 class="text-gray-500 dark:text-gray-400 font-semibold mb-2">Faturamento (MRR)</h3>
+                <p class="text-4xl font-bold text-blue-500"><%= faturamento %></p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center">
+                <button onclick="toggleModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow-lg transition-all">
+                    + Cadastrar Nova Barbearia
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-12 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-bold">Barbearias Cadastradas</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm uppercase font-semibold">
+                            <th class="p-4">Nome</th>
+                            <th class="p-4">Link (Slug)</th>
+                            <th class="p-4">Telefone</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <% if (barbearias.length === 0) { %>
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-gray-500">Nenhuma barbearia cadastrada ainda.</td>
+                            </tr>
+                        <% } else { %>
+                            <% barbearias.forEach(b => { %>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <td class="p-4 font-medium"><%= b.nome %></td>
+                                    <td class="p-4 text-blue-500 underline text-sm">
+                                        <a href="http://<%= b.slug %>.localhost:3000" target="_blank"><%= b.slug %></a>
+                                    </td>
+                                    <td class="p-4 text-sm"><%= b.telefone || 'Não informado' %></td>
+                                    <td class="p-4">
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold <%= b.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                            <%= b.status.toUpperCase() %>
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-center">
+                                        <a href="/superadmin/status/<%= b.id %>/<%= b.status %>" 
+                                        class="px-4 py-1.5 rounded text-white text-xs font-bold transition-all <%= b.status === 'ativo' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600' %>">
+                                            <%= b.status === 'ativo' ? 'Desativar' : 'Ativar' %>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+
+    <div id="modalCadastro" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-2xl transition-colors duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Nova Barbearia</h3>
+                <button onclick="toggleModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-2xl">&times;</button>
+            </div>
+
+            <form action="/superadmin/cadastrar" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Nome da Barbearia</label>
+                    <input type="text" name="nome" required class="w-full p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Slug (Link único na URL)</label>
+                    <input type="text" name="slug" placeholder="ex: donjuan-barber" required class="w-full p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Telefone</label>
+                    <input type="text" name="telefone" class="w-full p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Status Inicial</label>
+                    <select name="status" class="w-full p-2 rounded border dark:bg-gray-700 dark:border-gray-600">
+                        <option value="teste_gratis">Teste Grátis (7 dias)</option>
+                        <option value="ativo">Ativo (Pago)</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded font-medium">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700">Salvar Sistema</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/dashboard_superAdmin.js"></script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

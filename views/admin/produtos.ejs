@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-[#0f141e] text-gray-800 dark:text-gray-100 transition-colors duration-300 font-sans">
+
+    <%- include('../partials/sidebar') %>
+
+        <main class="p-4 md:p-8 max-w-7xl mx-auto w-full">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-5 animate-slide-up" <%- `style="animation-delay: 0s;"` %>>
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50 shadow-sm">
+                            <i class="fa-solid fa-box-open text-xl"></i>
+                        </div>
+                        Estoque e Produtos
+                    </h2>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2 ml-[3.25rem]">Gerencie os itens à venda na sua barbearia física e vitrine.</p>
+                </div>
+                
+                <button onclick="toggleModal('modalProduto')" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/20 transition-all hover:scale-[1.02] flex items-center justify-center whitespace-nowrap">
+                    <i class="fa-solid fa-plus mr-2"></i> Cadastrar Produto
+                </button>
+            </div>
+
+            <!-- Tabela de Produtos -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 overflow-hidden animate-slide-up" <%- `style="animation-delay: 0.1s;"` %>>
+                <div class="overflow-x-auto custom-scrollbar pb-2">
+                    <table class="w-full text-left min-w-[800px]">
+                        <thead class="bg-gray-50/50 dark:bg-gray-700/30 border-b-2 border-gray-100 dark:border-gray-700/50">
+                            <tr>
+                                <th class="py-5 px-6 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Produto</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 w-1/3">Descrição</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Estoque</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Valor Unitário</th>
+                                <th class="py-5 px-6 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50 dark:divide-gray-700/30">
+                            <% if (typeof produtos === 'undefined' || produtos.length === 0) { %>
+                                <tr>
+                                    <td colspan="5" class="py-16 text-center">
+                                        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-300 dark:text-gray-600 text-2xl">
+                                            <i class="fa-solid fa-box"></i>
+                                        </div>
+                                        <p class="text-gray-400 font-bold">O estoque está vazio. Adicione o seu primeiro produto!</p>
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <% produtos.forEach(p => { %>
+                                    <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/20 transition-colors group">
+                                        
+                                        <!-- Imagem e Nome -->
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-4">
+                                                <% if (p.imagem_url) { %>
+                                                    <img src="<%= p.imagem_url %>" class="w-12 h-12 rounded-xl object-cover border border-gray-200 dark:border-gray-600 shadow-sm group-hover:scale-105 transition-transform">
+                                                <% } else { %>
+                                                    <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 border border-gray-200 dark:border-gray-600 shadow-sm group-hover:scale-105 transition-transform">
+                                                        <i class="fa-solid fa-bottle-droplet"></i>
+                                                    </div>
+                                                <% } %>
+                                                <span class="font-black text-gray-900 dark:text-white text-base"><%= p.nome %></span>
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- Descrição -->
+                                        <td class="py-4 px-4">
+                                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 line-clamp-2 pr-4" title="<%= p.descricao %>">
+                                                <%= p.descricao || 'Sem descrição.' %>
+                                            </p>
+                                        </td>
+                                        
+                                        <!-- Estoque -->
+                                        <td class="py-4 px-4 text-center">
+                                            <% if (p.quantidade_estoque > 5) { %>
+                                                <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-3 py-1.5 rounded-lg border border-green-200 dark:border-green-800">
+                                                    <%= p.quantidade_estoque %> UN
+                                                </span>
+                                            <% } else if (p.quantidade_estoque > 0) { %>
+                                                <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-800">
+                                                    <i class="fa-solid fa-triangle-exclamation"></i> <%= p.quantidade_estoque %> UN
+                                                </span>
+                                            <% } else { %>
+                                                <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-800">
+                                                    ESGOTADO
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        
+                                        <!-- Preço -->
+                                        <td class="py-4 px-4">
+                                            <span class="inline-block whitespace-nowrap text-base md:text-lg font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
+                                                R$ <%= Number(p.preco).toFixed(2) %>
+                                            </span>
+                                        </td>
+
+                                        <!-- Ações -->
+                                        <td class="py-4 px-6 text-center">
+                                            <div class="flex justify-center gap-2">
+                                                <button onclick="abrirModalEditarProduto('<%= p.id %>', '<%= p.nome %>', '<%= p.descricao %>', '<%= p.preco %>', '<%= p.quantidade_estoque %>', '<%= p.imagem_url %>')" 
+                                                        class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 hover:bg-blue-500 hover:border-blue-500 hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm" title="Editar Produto">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button>
+                                                <button onclick="abrirModalExcluirProduto('<%= p.id %>', '<%= p.nome %>')" 
+                                                        class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 hover:bg-red-500 hover:border-red-500 hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-sm" title="Excluir Produto">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+
+<div id="modalProduto" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md mx-4 shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        
+        <div class="bg-gradient-to-br from-indigo-600 to-purple-800 p-8 text-white relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <button onclick="toggleModal('modalProduto')" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-box-open mr-2"></i>Novo Produto</h3>
+            <p class="text-indigo-100 text-sm mt-1 font-medium">Adicione um item para venda.</p>
+        </div>
+        
+        <form action="/admin/produtos/cadastrar" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-5">
+            
+            <!-- Imagem Upload Premium -->
+            <div class="flex justify-center mb-6">
+                <div class="relative w-28 h-28 rounded-2xl bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center group cursor-pointer overflow-hidden shadow-sm" onclick="document.getElementById('inputImagemProduto').click()">
+                    <img id="previewImagemProduto" src="" class="w-full h-full object-cover hidden z-10">
+                    <div id="placeholderImagemProduto" class="text-center text-gray-400 group-hover:text-indigo-500 transition-colors">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl mb-1"></i>
+                        <span class="block text-[9px] font-black uppercase tracking-widest">Foto</span>
+                    </div>
+                </div>
+                <input type="file" id="inputImagemProduto" name="imagem" accept="image/*" class="hidden" onchange="previewImagem(event, 'previewImagemProduto', 'placeholderImagemProduto')">
+            </div>
+
+            <div class="group">
+                <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Nome do Produto</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                        <i class="fa-solid fa-bottle-droplet"></i>
+                    </div>
+                    <input type="text" name="nome" placeholder="Ex: Pomada Modeladora Matte" required 
+                           class="w-full pl-11 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm font-bold text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all">
+                </div>
+            </div>
+            
+            <div class="group">
+                <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Descrição</label>
+                <textarea name="descricao" rows="2" placeholder="Descreva os benefícios do produto..." 
+                          class="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm font-medium text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all custom-scrollbar resize-none"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="group">
+                    <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Preço (R$)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-500 font-black text-sm">R$</div>
+                        <input type="number" step="0.01" name="preco" placeholder="45.00" required 
+                               class="w-full pl-10 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-emerald-50 dark:bg-emerald-500/5 text-emerald-700 dark:text-emerald-400 text-base font-black focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all">
+                    </div>
+                </div>
+                
+                <div class="group">
+                    <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Qtd Estoque</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <input type="number" name="quantidade_estoque" placeholder="10" required 
+                               class="w-full pl-11 p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-base font-black text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-6 border-t border-gray-100 dark:border-gray-700/50 flex gap-3 mt-6">
+                <button type="button" onclick="toggleModal('modalProduto')" class="w-full py-3.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-black hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Cancelar</button>
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black shadow-lg shadow-indigo-500/30 hover:scale-[1.02] transition-all">Salvar Produto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalEditarProduto" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md mx-4 shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 max-h-[90vh] overflow-y-auto custom-scrollbar">
+        
+        <div class="bg-gradient-to-br from-gray-800 to-black p-8 text-white relative overflow-hidden">
+            <button onclick="toggleModal('modalEditarProduto')" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-pen-to-square mr-2"></i>Editar Produto</h3>
+            <p class="text-gray-300 text-sm mt-1 font-medium">Atualize estoque, valor ou imagem.</p>
+        </div>
+        
+        <form id="formEditarProduto" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-5">
+            
+            <!-- Upload Imagem Edit -->
+            <div class="flex justify-center mb-6">
+                <div class="relative w-28 h-28 rounded-2xl bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center group cursor-pointer overflow-hidden shadow-sm" onclick="document.getElementById('inputEditImagem').click()">
+                    <img id="previewEditImagem" src="" class="w-full h-full object-cover hidden z-10">
+                    <div id="placeholderEditImagem" class="text-center text-gray-400 group-hover:text-blue-500 transition-colors">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl mb-1"></i>
+                        <span class="block text-[9px] font-black uppercase tracking-widest">Alterar Foto</span>
+                    </div>
+                </div>
+                <input type="file" id="inputEditImagem" name="imagem" accept="image/*" class="hidden" onchange="previewImagem(event, 'previewEditImagem', 'placeholderEditImagem')">
+            </div>
+
+            <div class="group">
+                <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Nome do Produto</label>
+                <input type="text" id="edit_nome_produto" name="nome" required 
+                       class="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm font-bold text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 dark:focus:ring-gray-200 outline-none transition-all">
+            </div>
+            
+            <div class="group">
+                <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Descrição</label>
+                <textarea id="edit_descricao_produto" name="descricao" rows="2" 
+                          class="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm font-medium text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 dark:focus:ring-gray-200 outline-none transition-all custom-scrollbar resize-none"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="group">
+                    <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Preço (R$)</label>
+                    <input type="number" step="0.01" id="edit_preco_produto" name="preco" required 
+                           class="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-base font-black text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 outline-none transition-all">
+                </div>
+                <div class="group">
+                    <label class="block text-[10px] font-black text-gray-500 tracking-widest uppercase mb-2">Estoque Atual</label>
+                    <input type="number" id="edit_estoque_produto" name="quantidade_estoque" required 
+                           class="w-full p-3.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-base font-black text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 outline-none transition-all">
+                </div>
+            </div>
+            
+            <div class="pt-6 border-t border-gray-100 dark:border-gray-700/50 flex gap-3 mt-6">
+                <button type="button" onclick="toggleModal('modalEditarProduto')" class="w-full py-3.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-black hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Cancelar</button>
+                <button type="submit" class="w-full py-3.5 bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-xl font-black shadow-lg transition-all hover:scale-[1.02]">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalExcluirProduto" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full mx-4 p-8 shadow-2xl text-center transform scale-95 transition-transform duration-300">
+        
+        <div class="relative w-24 h-24 mx-auto mb-6">
+            <div class="absolute inset-0 bg-red-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
+            <div class="relative w-full h-full bg-red-50 dark:bg-red-500/10 border-4 border-red-100 dark:border-red-500/20 text-red-500 rounded-full flex items-center justify-center text-4xl shadow-inner">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+        </div>
+        
+        <h3 class="text-2xl font-black mb-2 text-gray-900 dark:text-white tracking-tight">Remover Produto?</h3>
+        
+        <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm font-medium leading-relaxed">
+            Você está prestes a apagar o produto <br>
+            <strong id="nomeProdutoExcluir" class="text-gray-900 dark:text-white text-lg block mt-2"></strong>
+            <span class="block mt-4 text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-50 dark:bg-red-900/20 py-2 rounded-lg border border-red-100 dark:border-red-800/30">Ação irreversível</span>
+        </p>
+        
+        <div class="flex gap-3">
+            <button onclick="toggleModal('modalExcluirProduto')" class="w-full py-3.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-black transition-colors">Voltar</button>
+            <a id="btnConfirmarExclusaoProduto" href="#" class="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black shadow-lg shadow-red-500/30 hover:scale-[1.02] transition-all flex items-center justify-center">
+                Sim, Remover
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="/js/produto_admin.js"></script>
+<script src="/js/theme.js"></script>
+</body>
+</html>

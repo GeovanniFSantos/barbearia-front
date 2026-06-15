@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-[#0f141e] text-gray-800 dark:text-gray-100 transition-colors duration-300 font-sans">
+
+    <%- include('../partials/sidebar') %>
+
+        <main class="p-4 md:p-8 max-w-[1400px] mx-auto w-full">
+            
+            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 animate-slide-up" <%- `style="animation-delay: 0s;"` %>>
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Centro de Comando</h2>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Acompanhe o desempenho e vendas em tempo real.</p>
+                </div>
+                <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700/60 shadow-sm text-sm font-bold text-gray-600 dark:text-gray-300">
+                    <i class="fa-regular fa-calendar text-blue-500"></i>
+                    <%= new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) %>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO (Mantidos originais, apenas ajustei cantos) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 mb-10">
+                <!-- Clientes Hoje -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden animate-slide-up">
+                    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Clientes Hoje</p>
+                            <h3 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight"><%= stats.clientesHoje %></h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform shadow-inner"><i class="fa-solid fa-users text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <!-- Agenda Amanhã -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Para Amanhã</p>
+                            <h3 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight"><%= stats.agendamentosAmanha %></h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shadow-inner"><i class="fa-solid fa-calendar-day text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <!-- Faturamento Hoje -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Faturamento Hoje</p>
+                            <h3 class="text-3xl font-black text-emerald-500 tracking-tight"><%= stats.ganhoHoje %></h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shadow-inner"><i class="fa-solid fa-sack-dollar text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <!-- Faturamento Ontem -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600"></div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Faturamento Ontem</p>
+                            <h3 class="text-3xl font-black text-amber-500 tracking-tight"><%= stats.ganhoOntem %></h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform shadow-inner"><i class="fa-solid fa-clock-rotate-left text-2xl"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÁREA DO MEIO (Agenda + Gráfico) -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8 mb-8">
+                
+                <!-- AGENDA DE HOJE -->
+                <div class="xl:col-span-2 bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-xl font-black flex items-center text-gray-900 dark:text-white">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center mr-3 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            Fluxo do Dia
+                        </h4>
+                        <a href="/admin/agenda" class="text-xs font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-800/30">Agenda Completa</a>
+                    </div>
+                    
+                    <div class="overflow-x-auto custom-scrollbar pb-2">
+                        <table class="w-full text-left min-w-[600px]">
+                            <tbody class="divide-y divide-gray-50 dark:divide-gray-700/30">
+                                <% if (agendaHoje.length === 0) { %>
+                                    <tr><td class="text-center py-12 text-gray-400 dark:text-gray-500 font-medium bg-gray-50/50 dark:bg-gray-800/30 rounded-xl mt-4">Nenhum cliente agendado para hoje.</td></tr>
+                                <% } else { %>
+                                    <% agendaHoje.forEach(ag => { %>
+                                        <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/20 transition-colors group">
+                                            <td class="py-4 pr-4 w-24">
+                                                <div class="inline-block px-3 py-2 bg-gray-100 dark:bg-gray-700/50 rounded-xl font-black text-gray-900 dark:text-white text-sm shadow-sm border border-gray-200 dark:border-gray-600"><%= ag.horario %></div>
+                                            </td>
+                                            <td class="py-4 px-2">
+                                                <div class="font-black text-gray-800 dark:text-gray-200 text-base"><%= ag.cliente_nome || 'Cliente Local' %></div>
+                                            </td>
+                                            <td class="py-4 px-2">
+                                                <!-- AQUI ENTRA A TAG DO PRODUTO -->
+                                                <div class="flex flex-col gap-1.5">
+                                                    <span class="block font-bold text-gray-700 dark:text-gray-300 text-sm"><%= ag.servico_nome || 'Serviço' %></span>
+                                                    <% if(ag.produto_nome) { %>
+                                                        <span class="inline-flex w-max items-center gap-1.5 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
+                                                            <i class="fa-solid fa-box-open"></i> + <%= ag.produto_nome %>
+                                                        </span>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            <td class="py-4 px-2 text-right">
+                                                <span class="text-sm font-black text-green-500 block mb-1">R$ <%= Number(ag.valor_total).toFixed(2) %></span>
+                                                <% if (ag.status === 'concluido' || ag.status === 'pago') { %>
+                                                    <span class="text-[9px] font-black uppercase text-green-600 dark:text-green-400"><i class="fa-solid fa-check"></i> Concluído</span>
+                                                <% } else if (ag.status === 'cancelado') { %>
+                                                    <span class="text-[9px] font-black uppercase text-red-500"><i class="fa-solid fa-xmark"></i> Cancelado</span>
+                                                <% } else { %>
+                                                    <span class="text-[9px] font-black uppercase text-amber-500"><i class="fa-regular fa-clock"></i> Pendente</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO CLIENTES -->
+                <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 animate-slide-up" style="animation-delay: 0.5s;">
+                    <h4 class="text-xl font-black mb-6 flex items-center text-gray-900 dark:text-white">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center mr-3 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-500/20">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </div>
+                        Semana
+                    </h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="clientesGrafico" data-dados='<%- JSON.stringify(dadosGrafico) %>'></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LINHA INFERIOR (Receitas vs Produtos vs Retenção) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                
+                <!-- RECEITAS PAGAMENTO -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 animate-slide-up" style="animation-delay: 0.6s;">
+                    <h4 class="text-lg font-black mb-6 flex items-center text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700/50 pb-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mr-3 text-emerald-600 border border-emerald-100 dark:border-emerald-500/20"><i class="fa-solid fa-vault"></i></div>
+                        <div>
+                            Receitas (Mês)
+                            <span class="block text-[9px] uppercase font-black text-gray-400 mt-1 tracking-widest">Divisão por Pagamento</span>
+                        </div>
+                    </h4>
+                    <div class="space-y-3">
+                        <% if (pagamentos.length === 0) { %>
+                            <p class="text-sm text-gray-400 text-center py-6 bg-gray-50 dark:bg-gray-900/50 rounded-xl font-bold">Nenhum faturamento registrado.</p>
+                        <% } else { %>
+                            <% pagamentos.forEach(pag => { %>
+                                <div class="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-transparent">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm <%= pag.nome.toLowerCase().includes('pix') ? 'bg-gradient-to-br from-teal-400 to-teal-600' : (pag.nome.toLowerCase().includes('cart') ? 'bg-gradient-to-br from-blue-400 to-blue-600' : 'bg-gradient-to-br from-emerald-400 to-emerald-600') %>">
+                                            <i class="fa-solid <%= pag.nome.toLowerCase().includes('pix') ? 'fa-qrcode' : (pag.nome.toLowerCase().includes('cart') ? 'fa-credit-card' : 'fa-money-bill') %>"></i>
+                                        </div>
+                                        <span class="font-black capitalize text-sm text-gray-700 dark:text-gray-200"><%= pag.nome %></span>
+                                    </div>
+                                    <span class="font-black text-green-500 text-lg"><%= pag.total %></span>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- PRODUTOS VENDIDOS NO MÊS -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 animate-slide-up" style="animation-delay: 0.7s;">
+                    <h4 class="text-lg font-black mb-6 flex items-center text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700/50 pb-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mr-3 text-indigo-600 border border-indigo-100 dark:border-indigo-500/20"><i class="fa-solid fa-box-open"></i></div>
+                        <div>
+                            Produtos (Mês)
+                            <span class="block text-[9px] uppercase font-black text-gray-400 mt-1 tracking-widest">Mais vendidos da loja</span>
+                        </div>
+                    </h4>
+                    <div class="space-y-3">
+                        <% if (typeof produtosVendidos !== 'undefined' && produtosVendidos.length === 0) { %>
+                            <p class="text-sm text-gray-400 text-center py-6 bg-gray-50 dark:bg-gray-900/50 rounded-xl font-bold">Sem vendas de produtos.</p>
+                        <% } else if (typeof produtosVendidos !== 'undefined') { %>
+                            <% produtosVendidos.forEach(p => { %>
+                                <div class="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-transparent">
+                                    <div class="w-full">
+                                        <span class="block font-black text-sm text-gray-800 dark:text-white truncate pr-2"><%= p.produto_nome %></span>
+                                        <div class="flex justify-between items-center mt-1">
+                                            <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest"><%= p.qtd_vendida %> UN VENDIDAS</span>
+                                            <span class="font-black text-gray-500 dark:text-gray-400 text-xs">R$ <%= Number(p.total_gerado).toFixed(2) %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- RADAR DE RETENÇÃO -->
+                <div class="relative bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-red-100 dark:border-red-900/30 overflow-hidden animate-slide-up group" style="animation-delay: 0.8s;">
+                    <div class="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 bg-red-50 dark:bg-red-500/5 rounded-full blur-2xl"></div>
+                    <h4 class="text-lg font-black mb-6 flex items-center text-gray-900 dark:text-white border-b border-red-100 dark:border-red-900/20 pb-4 relative z-10">
+                        <div class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center mr-3 text-red-500 border border-red-100 dark:border-red-500/20 relative">
+                            <span class="absolute inline-flex h-full w-full rounded-xl bg-red-400 opacity-30 animate-ping"></span>
+                            <i class="fa-solid fa-radar"></i>
+                        </div>
+                        <div>
+                            Radar Retenção
+                            <span class="block text-[9px] font-black text-red-500 uppercase tracking-widest mt-1">Ação Necessária</span>
+                        </div>
+                    </h4>
+                    
+                    <div class="space-y-3 relative z-10">
+                        <% if (clientesAusentes.length === 0) { %>
+                            <div class="text-center py-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl">
+                                <i class="fa-regular fa-face-smile text-2xl text-green-500 mb-2"></i>
+                                <p class="text-sm font-bold text-gray-500">Excelente retenção!</p>
+                            </div>
+                        <% } else { %>
+                            <% clientesAusentes.forEach(ausente => { %>
+                                <% 
+                                    const msgWhats = `Olá ${ausente.cliente_nome}! Tudo bem? Faz ${ausente.dias_ausente} dias desde o seu último corte na ${barbearia.nome}. Vamos agendar?`;
+                                    const linkWhats = `https://api.whatsapp.com/send?phone=55${ausente.cliente_telefone.replace(/\D/g, '')}&text=${encodeURIComponent(msgWhats)}`;
+                                %>
+                                <div class="flex items-center justify-between p-3.5 rounded-2xl bg-red-50/50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
+                                    <div>
+                                        <span class="block font-black text-sm text-gray-900 dark:text-white mb-0.5 truncate max-w-[140px]"><%= ausente.cliente_nome %></span>
+                                        <span class="text-[9px] font-black text-red-600 dark:text-red-400 uppercase tracking-widest"><%= ausente.dias_ausente %> dias ausente</span>
+                                    </div>
+                                    <a href="<%= linkWhats %>" target="_blank" class="w-10 h-10 rounded-xl bg-green-500 hover:bg-green-600 text-white flex items-center justify-center shadow-md transition-all hover:scale-110" title="Chamar no WhatsApp"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div> 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard_admin.js"></script>
+<script src="/js/theme.js"></script>
+</body>
+</html>

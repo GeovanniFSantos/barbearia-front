@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+    
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+        
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-6 mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-green-600 dark:text-green-400">Solução Sob Medida</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Política de Privacidade (LGPD) • Vigência: Junho/2026</p>
+            </div>
+        </div>
+
+        <div class="space-y-6 text-justify leading-relaxed">
+            <p>Esta política descreve de forma transparente como a plataforma coleta e trata dados pessoais, em total conformidade com a <strong>LGPD (Lei Geral de Proteção de Dados - Lei nº 13.709/18)</strong>.</p>
+
+            <h2 class="text-xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-user-check"></i> 1. Dados Pessoais Coletados
+            </h2>
+            <p>Armazenamos apenas as informações cruciais para a operação e identificação do usuário:</p>
+            <ul class="list-disc pl-5 space-y-2">
+                <li><strong>Cadastro Manual:</strong> Nome, E-mail e Telefone (salvos em nosso banco MySQL com segurança).</li>
+                <li><strong>Login com Google (OAuth 2.0):</strong> Coletamos apenas o e-mail e o nome público da conta fornecidos pelo token de segurança do Google. Nenhuma senha da sua conta Google é acessada.</li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-lock"></i> 2. Proteção de Dados Financeiros
+            </h2>
+            <ol class="list-decimal pl-5 space-y-2 font-medium text-gray-700 dark:text-gray-300">
+                <li>Os dados de Cartão de Crédito são digitados diretamente na SDK segura do Mercado Pago. <strong>Eles nunca são armazenados ou transitam pelo nosso banco de dados.</strong></li>
+                <li>O CPF solicitado na transação é usado temporariamente pela instituição financeira para análise de risco e fraudes. Não salvamos o CPF no sistema.</li>
+            </ol>
+
+            <h2 class="text-xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-handshake-angle"></i> 3. Direitos do Usuário
+            </h2>
+            <p>Conforme o artigo 18 da LGPD, você pode, a qualquer momento, solicitar a visualização, correção ou exclusão definitiva de seus dados cadastrais da nossa base global entrando em contato com o suporte do sistema.</p>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-gray-700 mt-12 pt-6 text-center text-xs text-xs text-gray-400">
+            &copy; 2026 Solução Sob Medida. Em conformidade com a Lei 13.709/18.
+        </div>
+    </div>
+
+    <script src="/js/theme.js"></script>
+</body>
+</html>

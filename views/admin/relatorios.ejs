@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - <%= barbearia.nome %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-[#0f141e] text-gray-800 dark:text-gray-100 transition-colors duration-300 font-sans">
+
+    <%- include('../partials/sidebar') %>
+
+        <main class="p-4 md:p-8 max-w-[1400px] mx-auto w-full">
+            
+            <!-- Cabeçalho e Filtro -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-5 animate-slide-up" <%- `style="animation-delay: 0s;"` %>>
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/50 shadow-sm">
+                            <i class="fa-solid fa-chart-pie text-xl"></i>
+                        </div>
+                        Inteligência e Métricas
+                    </h2>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2 ml-[3.25rem]">Acompanhe a saúde financeira, equipe e controle de vendas.</p>
+                </div>
+                
+                <form id="formFiltroData" action="/admin/relatorios" method="GET" class="w-full md:w-auto flex items-center gap-3 bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/60">
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-3">Mês Base:</span>
+                    <input type="month" name="mesFiltro" value="<%= mesFiltro %>" onchange="document.getElementById('formFiltroData').submit()" 
+                           class="w-full sm:w-auto p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm font-black text-teal-600 dark:text-teal-400 focus:ring-2 focus:ring-teal-500 shadow-inner cursor-pointer outline-none transition-all">
+                </form>
+            </div>
+
+            <!-- Gráfico Principal -->
+            <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 mb-8 animate-slide-up" <%- `style="animation-delay: 0.1s;"` %>>
+                <h4 class="text-xl font-black mb-6 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700/50 pb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-500/10 flex items-center justify-center text-green-500 border border-green-100 dark:border-green-500/20">
+                        <i class="fa-solid fa-money-trend-up"></i>
+                    </div>
+                    Evolução de Receitas <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 ml-2">Últimos 6 meses</span>
+                </h4>
+                <div class="relative h-80 w-full">
+                    <canvas id="faturamentoChart" data-dados='<%- JSON.stringify(faturamento) %>'></canvas>
+                </div>
+            </div>
+
+            <!-- Grid de Métricas (4 Colunas: Receita, Equipe, Serviços, Produtos) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 animate-slide-up" <%- `style="animation-delay: 0.2s;"` %>>
+
+                <!-- Coluna 1: Receita Bruta -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 flex flex-col h-[400px]">
+                    <div class="flex items-center gap-3 mb-6 flex-shrink-0">
+                        <div class="w-10 h-10 flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl shadow-inner"><i class="fa-solid fa-dollar-sign text-xl"></i></div>
+                        <div>
+                            <h4 class="text-lg font-black text-gray-900 dark:text-white leading-tight">Receita Bruta</h4>
+                            <span class="text-[9px] uppercase font-black tracking-widest text-gray-400">Histórico Mensal</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-2">
+                        <% if (faturamento.length === 0) { %>
+                            <div class="p-6 bg-gray-50 dark:bg-gray-700/30 rounded-2xl text-center h-full flex flex-col justify-center"><i class="fa-solid fa-folder-open text-gray-300 dark:text-gray-600 text-3xl mb-2"></i><p class="text-sm font-bold text-gray-400">Sem dados.</p></div>
+                        <% } else { %>
+                            <% faturamento.forEach((f, index) => { %>
+                                <div class="p-4 rounded-2xl flex justify-between items-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 <%= index === 0 ? 'bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-800/30' : 'border border-gray-100 dark:border-gray-700/50' %>">
+                                    <div>
+                                        <span class="block font-black text-sm text-gray-800 dark:text-white"><%= f.mes %></span>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest"><%= f.qtd %> Cortes</span>
+                                    </div>
+                                    <span class="font-black text-green-500 text-base">R$ <%= f.total %></span>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Top Barbeiros -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 flex flex-col h-[400px]">
+                    <div class="flex items-center gap-3 mb-6 flex-shrink-0">
+                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl shadow-inner"><i class="fa-solid fa-trophy text-xl"></i></div>
+                        <div>
+                            <h4 class="text-lg font-black text-gray-900 dark:text-white leading-tight">Top Equipe</h4>
+                            <span class="text-[9px] uppercase font-black tracking-widest text-gray-400">Filtro Atual</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-2">
+                        <% if (barbeiros.length === 0) { %>
+                            <div class="p-6 bg-gray-50 dark:bg-gray-700/30 rounded-2xl text-center h-full flex flex-col justify-center"><i class="fa-solid fa-users-slash text-gray-300 dark:text-gray-600 text-3xl mb-2"></i><p class="text-sm font-bold text-gray-400">Sem cortes no mês.</p></div>
+                        <% } else { %>
+                            <% barbeiros.forEach((b, index) => { %>
+                                <div class="p-4 rounded-2xl flex justify-between items-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-100 dark:border-gray-700/50 relative overflow-hidden group">
+                                    <% if (index === 0) { %><div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div><% } %>
+                                    <div class="flex items-center gap-3 pl-1">
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-black text-gray-500 shadow-sm border border-gray-200 dark:border-gray-600">#<%= index + 1 %></div>
+                                        <div>
+                                            <span class="block font-black text-sm text-gray-800 dark:text-white group-hover:text-blue-500 transition-colors truncate max-w-[100px]"><%= b.profissional_nome %></span>
+                                            <span class="text-[9px] uppercase font-bold text-green-500 tracking-widest">R$ <%= Number(b.faturamento_gerado).toFixed(2) %></span>
+                                        </div>
+                                    </div>
+                                    <span class="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg text-xs font-black shadow-sm"><%= b.total_atendimentos %>x</span>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Coluna 3: Serviços Populares -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 flex flex-col h-[400px]">
+                    <div class="flex items-center gap-3 mb-6 flex-shrink-0">
+                        <div class="w-10 h-10 flex items-center justify-center bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-xl shadow-inner"><i class="fa-solid fa-fire text-xl"></i></div>
+                        <div>
+                            <h4 class="text-lg font-black text-gray-900 dark:text-white leading-tight">Top Serviços</h4>
+                            <span class="text-[9px] uppercase font-black tracking-widest text-gray-400">Filtro Atual</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-2">
+                        <% if (servicos.length === 0) { %>
+                            <div class="p-6 bg-gray-50 dark:bg-gray-700/30 rounded-2xl text-center h-full flex flex-col justify-center"><i class="fa-solid fa-scissors text-gray-300 dark:text-gray-600 text-3xl mb-2"></i><p class="text-sm font-bold text-gray-400">Sem vendas no mês.</p></div>
+                        <% } else { %>
+                            <% servicos.forEach((s, index) => { %>
+                                <div class="p-4 rounded-2xl flex justify-between items-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-100 dark:border-gray-700/50 relative overflow-hidden group">
+                                    <% if (index === 0) { %><div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div><% } %>
+                                    <div class="pl-1">
+                                        <span class="block font-black text-sm text-gray-800 dark:text-white group-hover:text-purple-500 transition-colors truncate max-w-[120px]"><%= s.servico_nome %></span>
+                                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-widest">R$ <%= Number(s.faturamento_servico).toFixed(2) %></span>
+                                    </div>
+                                    <span class="text-base font-black text-gray-300 dark:text-gray-600 group-hover:text-purple-400 transition-colors flex items-center gap-1"><%= s.total_vendas %> <i class="fa-solid fa-arrow-trend-up text-[10px]"></i></span>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Coluna 4: Produtos Mais Vendidos (NOVO) -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 flex flex-col h-[400px]">
+                    <div class="flex items-center gap-3 mb-6 flex-shrink-0">
+                        <div class="w-10 h-10 flex items-center justify-center bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-xl shadow-inner"><i class="fa-solid fa-bag-shopping text-xl"></i></div>
+                        <div>
+                            <h4 class="text-lg font-black text-gray-900 dark:text-white leading-tight">Top Produtos</h4>
+                            <span class="text-[9px] uppercase font-black tracking-widest text-gray-400">Filtro Atual</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto custom-scrollbar flex-1 pr-2">
+                        <% if (typeof produtosVendidos !== 'undefined' && produtosVendidos.length === 0) { %>
+                            <div class="p-6 bg-gray-50 dark:bg-gray-700/30 rounded-2xl text-center h-full flex flex-col justify-center"><i class="fa-solid fa-box-open text-gray-300 dark:text-gray-600 text-3xl mb-2"></i><p class="text-sm font-bold text-gray-400">Nenhum produto vendido.</p></div>
+                        <% } else if (typeof produtosVendidos !== 'undefined') { %>
+                            <% produtosVendidos.forEach((p, index) => { %>
+                                <div class="p-4 rounded-2xl flex justify-between items-center transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 border border-gray-100 dark:border-gray-700/50 relative overflow-hidden group">
+                                    <% if (index === 0) { %><div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div><% } %>
+                                    <div class="pl-1">
+                                        <span class="block font-black text-sm text-gray-800 dark:text-white group-hover:text-indigo-500 transition-colors truncate max-w-[120px]"><%= p.produto_nome %></span>
+                                        <span class="text-[9px] uppercase font-bold text-gray-400 tracking-widest">R$ <%= Number(p.faturamento_produto).toFixed(2) %></span>
+                                    </div>
+                                    <span class="text-base font-black text-gray-300 dark:text-gray-600 group-hover:text-indigo-400 transition-colors flex items-center gap-1"><%= p.total_vendas %> <i class="fa-solid fa-arrow-trend-up text-[10px]"></i></span>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+            </div> <!-- Fim do Grid Superior -->
+
+            <!-- Secção Expandida: Alerta de Estoque -->
+            <div class="mt-6 bg-white dark:bg-gray-800 p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 animate-slide-up" <%- `style="animation-delay: 0.3s;"` %>>
+                <h4 class="text-xl font-black mb-6 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700/50 pb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-500 border border-amber-200 dark:border-amber-800/30">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    Posição de Estoque <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 ml-2">Atenção à Reposição Global</span>
+                </h4>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                    <% if (typeof produtosEstoque !== 'undefined' && produtosEstoque.length === 0) { %>
+                        <div class="col-span-full p-6 text-center text-gray-400 font-bold bg-gray-50 dark:bg-gray-900/50 rounded-2xl">Nenhum produto cadastrado no catálogo.</div>
+                    <% } else if (typeof produtosEstoque !== 'undefined') { %>
+                        <% produtosEstoque.forEach((p) => { %>
+                            <div class="p-5 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700/50 hover:shadow-md transition-all flex flex-col justify-between">
+                                <div>
+                                    <span class="block font-black text-sm text-gray-900 dark:text-white line-clamp-2 leading-tight mb-2"><%= p.produto_nome %></span>
+                                    <span class="text-xs font-black text-emerald-500">R$ <%= Number(p.produto_preco).toFixed(2) %></span>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden mb-2">
+                                        <% let corBarra = p.quantidade_estoque > 5 ? 'bg-green-500' : (p.quantidade_estoque > 0 ? 'bg-amber-500' : 'bg-red-500'); %>
+                                        <% let largura = p.quantidade_estoque > 20 ? 100 : (p.quantidade_estoque * 5); %>
+                                       <div class="<%= corBarra %> h-1.5 rounded-full transition-all duration-1000" <%- `style="width: ${largura}%"` %>></div>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[9px] uppercase font-black tracking-widest">
+                                        <span class="text-gray-400">Estoque</span>
+                                        <span class="<%= p.quantidade_estoque <= 5 ? 'text-red-500' : 'text-gray-600 dark:text-gray-300' %>">
+                                            <%= p.quantidade_estoque %> UN <%= p.quantidade_estoque === 0 ? '(ESGOTADO)' : '' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+
+        </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/relatorio_admin.js"></script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termos de Uso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+        
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-6 mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-blue-600 dark:text-blue-400">Solução Sob Medida</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Termos de Uso da Plataforma • Vigência: Junho/2026</p>
+            </div>
+        </div>
+
+        <div class="space-y-6 text-justify leading-relaxed">
+            <p>Seja bem-vindo à plataforma <strong>Solução Sob Medida</strong>. Este documento regula o acesso, cadastro e uso do sistema de agendamento e gestão comercial para estabelecimentos de barbearia e estética.</p>
+            
+            <p>Ao se cadastrar ou realizar agendamentos em nosso sistema, você declara aceitar expressamente todas as condições descritas abaixo.</p>
+
+            <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-circle-info"></i> 1. Definições do Ecossistema
+            </h2>
+            <ul class="list-disc pl-5 space-y-2">
+                <li><strong>A Plataforma:</strong> A solução tecnológica de software fornecida pela marca <em>Solução Sob Medida</em>.</li>
+                <li><strong>O Estabelecimento:</strong> A barbearia ou gestor que utiliza o sistema para gerenciar horários e colaboradores.</li>
+                <li><strong>O Cliente Final:</strong> A pessoa física que acessa a vitrine para agendar serviços.</li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-shield-halved"></i> 2. Segurança e Credenciais
+            </h2>
+            <p>As senhas de acesso criadas pelos usuários são estritamente confidenciais e armazenadas com criptografia de hash segura (<em>bcrypt</em>). A guarda da senha é de responsabilidade exclusiva do usuário, eximindo a plataforma de acessos não autorizados por compartilhamento ou engenharia social.</p>
+
+            <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 mt-8">
+                <i class="fa-solid fa-credit-card"></i> 3. Arquitetura Financeira e Estornos
+            </h2>
+            <p>O processamento financeiro ocorre diretamente na conta do Mercado Pago vinculada pelo estabelecimento. A plataforma fornece uma automação profissional de reembolso: no momento em que o barbeiro ou dono clica em "Cancelar Horário", o sistema aciona a API financeira e devolve o Pix ou crédito imediatamente ao cliente final.</p>
+
+            <div class="bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-500 p-4 rounded-r-lg text-sm text-blue-800 dark:text-blue-300">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i><strong>Isenção de Responsabilidade Comercial:</strong> O Solução Sob Medida é estritamente o fornecedor do software (SaaS). Não nos responsabilizamos pela execução dos serviços físicos de corte, atrasos ou condutas dentro do estabelecimento.
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-gray-700 mt-12 pt-6 text-center text-xs text-gray-400">
+            &copy; 2026 Solução Sob Medida. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <script src="/js/theme.js"></script>
+</body>
+</html>

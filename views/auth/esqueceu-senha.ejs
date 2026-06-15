@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' }
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl w-full max-w-md animate-fade-in border border-gray-100 dark:border-gray-700 text-center">
+        
+        <div class="mb-8">
+            <% if (typeof barbearia !== 'undefined' && barbearia && barbearia.foto_perfil) { %>
+                <img src="<%= barbearia.foto_perfil %>" alt="Logo <%= barbearia.nome %>" class="w-20 h-20 mx-auto rounded-full object-cover border-4 border-gray-100 shadow-md mb-4">
+                <h2 class="text-2xl font-black text-gray-800 dark:text-white">Recuperar Senha</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1"><%= barbearia.nome %></p>
+            <% } else { %>
+                <div class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm">
+                    <i class="fa-solid fa-unlock-keyhole"></i>
+                </div>
+                <h2 class="text-2xl font-black text-gray-800 dark:text-white mb-2">Esqueceu a senha?</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Digite seu e-mail cadastrado e enviaremos um link de recuperação.</p>
+            <% } %>
+        </div>
+
+        <% if (typeof erro !== 'undefined' && erro) { %>
+            <div class="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm font-bold border border-red-200"><i class="fa-solid fa-triangle-exclamation"></i> <%= erro %></div>
+        <% } %>
+        
+        <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+            <div class="bg-green-50 text-green-600 p-4 rounded-xl mb-6 text-sm font-bold border border-green-200">
+                <i class="fa-solid fa-circle-check text-2xl mb-2 block"></i> <%= sucesso %>
+            </div>
+            <a href="/auth/login?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="inline-block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white p-3.5 rounded-xl font-bold transition-all">Voltar ao Login</a>
+        <% } else { %>
+            <form action="/auth/esqueceu-senha" method="POST" class="space-y-5 text-left">
+                <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">E-mail Cadastrado</label>
+                    <input type="email" name="email" required class="w-full p-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 transition-all font-medium placeholder:text-gray-400" placeholder="seu@email.com">
+                </div>
+
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white p-3.5 rounded-xl font-bold transition-all shadow-md flex justify-center items-center gap-2">
+                    Enviar Link <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+            <div class="mt-6 text-sm text-gray-500">
+                Lembrou da senha? <a href="/auth/login?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-amber-600 font-bold hover:underline">Voltar</a>
+            </div>
+        <% } %>
+    </div>
+<script src="/js/theme.js"></script>
+</body>
+</html>

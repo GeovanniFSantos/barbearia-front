@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300 antialiased min-h-screen flex flex-col">
+
+    <%- include('../partials/navbar_cliente') %>
+
+    <main class="flex-grow max-w-xl mx-auto w-full px-4 py-8">
+        
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-center text-white shadow-lg shadow-blue-500/20 mb-8 relative overflow-hidden animate-slide-up">
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-white opacity-10 blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-12 -mb-12 w-32 h-32 rounded-full bg-blue-400 opacity-20 blur-xl"></div>
+            
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-4 shadow-inner border-2 border-white/50 font-black">
+                    <%= cliente.nome.charAt(0).toUpperCase() %>
+                </div>
+                <h2 class="text-3xl font-black mb-1 tracking-tight"><%= cliente.nome %></h2>
+                <p class="text-blue-100 text-sm font-medium uppercase tracking-widest"><i class="fa-solid fa-gem text-blue-300 mr-1"></i> Membro Solução Sob Medida</p>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 mb-8 animate-slide-up" style="animation-delay: 0.1s;">
+            <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-address-card text-blue-500"></i> Dados Pessoais
+            </h3>
+            
+            <form action="/meu-perfil/salvar" method="POST" class="space-y-5">
+                
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Nome Completo</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <input type="text" name="nome" value="<%= cliente.nome %>" required class="w-full pl-11 p-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-gray-800 dark:text-gray-100 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">E-mail (Acesso)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <input type="email" value="<%= cliente.email %>" disabled class="w-full pl-11 p-3.5 bg-gray-100 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 dark:text-gray-400 cursor-not-allowed font-medium">
+                    </div>
+                    <p class="text-[11px] font-bold text-gray-400 dark:text-gray-500 mt-2 flex items-center"><i class="fa-solid fa-lock mr-1.5"></i> O e-mail de acesso não pode ser alterado.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Telefone / WhatsApp</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-green-500">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <input type="text" name="telefone" value="<%= cliente.telefone || '' %>" placeholder="(00) 00000-0000" class="w-full pl-11 p-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 font-medium text-gray-800 dark:text-gray-100 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="relative mb-6">
+                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-gray-800"></div></div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-4 bg-gray-50 dark:bg-gray-900 text-gray-400 font-black uppercase tracking-widest text-[10px]">
+                        Acesso e Segurança
+                    </span>
+                </div>
+            </div>
+            
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-gray-800"></div></div>
+
+            
+            <div class="text-center">
+                <a href="/auth/logout" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-3.5 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 font-black rounded-xl transition-all shadow-sm">
+                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Encerrar Sessão
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="toastSucesso" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-500 translate-y-20 opacity-0 pointer-events-none z-[9999]">
+        <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span class="font-black text-sm tracking-wide">Perfil atualizado com sucesso!</span>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('sucesso') === 'true') {
+                const toast = document.getElementById('toastSucesso');
+                setTimeout(() => { toast.classList.remove('translate-y-20', 'opacity-0'); }, 100);
+                setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3500);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

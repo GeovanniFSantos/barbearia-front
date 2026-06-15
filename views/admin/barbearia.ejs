@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - <%= barbearia.nome %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+    <%- include('../partials/sidebar') %>
+
+    <main class="p-4 md:p-8 max-w-6xl mx-auto w-full animate-slide-up">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl font-black flex items-center text-gray-800 dark:text-white">
+                    <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mr-3 text-blue-600">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    Configurações do Sistema
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-14">Ajuste os dados da sua empresa e o seu perfil.</p>
+            </div>
+            
+            <button type="submit" form="formEmpresa" class="bg-amber-400 hover:bg-amber-500 text-gray-900 font-black py-2.5 px-6 rounded-xl shadow-md transition-transform hover:scale-105 w-full md:w-auto flex justify-center items-center">
+                <i class="fa-solid fa-check mr-2"></i> Salvar Alterações
+            </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+            <button onclick="mudarAba('empresa')" id="btn-empresa" class="aba-btn px-6 py-2.5 bg-amber-400 text-gray-900 font-bold rounded-xl shadow-sm transition-all flex items-center">
+                <i class="fa-solid fa-building mr-2"></i> Sobre a Empresa
+            </button>
+            <button onclick="mudarAba('endereco')" id="btn-endereco" class="aba-btn px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex items-center">
+                <i class="fa-solid fa-map-location-dot mr-2"></i> Endereço
+            </button>
+            <button onclick="mudarAba('perfil')" id="btn-perfil" class="aba-btn px-6 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex items-center">
+                <i class="fa-solid fa-user-shield mr-2"></i> Meu Perfil
+            </button>
+        </div>
+
+        <form id="formEmpresa" action="/admin/barbearia/salvar" method="POST" enctype="multipart/form-data" onsubmit="return validarSenha()">
+            
+            <div id="tab-empresa" class="aba-conteudo flex flex-col md:flex-row gap-8">
+                <div class="w-full md:w-1/3 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-4 tracking-wider">Logo da Barbearia</label>
+                        <div class="w-32 h-32 mx-auto bg-gray-50 dark:bg-gray-700 rounded-full border-4 border-gray-100 dark:border-gray-600 shadow-md overflow-hidden relative group cursor-pointer" onclick="document.getElementById('inputLogo').click()">
+                            <img id="imgPreviewLogo" src="<%= barbearia.foto_perfil || '' %>" class="w-full h-full object-cover <%= barbearia.foto_perfil ? '' : 'hidden' %>">
+                            <i id="iconePlaceholderLogo" class="fa-solid fa-store text-4xl text-gray-300 dark:text-gray-500 mt-10 <%= barbearia.foto_perfil ? 'hidden' : '' %>"></i>
+                            <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <input type="file" id="inputLogo" name="foto_perfil" accept="image/*" class="hidden" onchange="preVisualizarImagem(event, 'imgPreviewLogo', 'iconePlaceholderLogo')">
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-4 tracking-wider">Banner da Vitrine</label>
+                        <div class="w-full h-32 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 overflow-hidden relative group cursor-pointer shadow-inner" onclick="document.getElementById('inputBanner').click()">
+                            <img id="imgPreviewBanner" src="<%= barbearia.banner || '' %>" class="w-full h-full object-cover <%= barbearia.banner ? '' : 'hidden' %>">
+                            <div id="iconePlaceholderBanner" class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-gray-500 <%= barbearia.banner ? 'hidden' : '' %>">
+                                <i class="fa-regular fa-image text-3xl mb-2"></i>
+                                <span class="text-xs font-bold">Adicionar Capa</span>
+                            </div>
+                        </div>
+                        <input type="file" id="inputBanner" name="banner" accept="image/*" class="hidden" onchange="preVisualizarImagem(event, 'imgPreviewBanner', 'iconePlaceholderBanner')">
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Nome da Empresa</label>
+                        <input type="text" name="nome" value="<%= barbearia.nome %>" required class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none font-bold">
+                        
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 mt-6 tracking-wider">Sobre a empresa (Vitrine)</label>
+                        <textarea name="descricao" rows="6" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none"><%= barbearia.descricao || '' %></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-endereco" class="aba-conteudo hidden bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">CEP</label>
+                        <div class="relative">
+                            <input type="text" id="cep" name="cep" value="<%= endereco.cep || '' %>" onblur="buscarCEP(this.value)" class="w-full p-3 pr-10 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none font-bold" placeholder="00000-000">
+                            <i class="fa-solid fa-magnifying-glass absolute right-4 top-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Endereço</label>
+                        <input type="text" id="rua" name="rua" value="<%= endereco.rua || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none">
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Número</label>
+                        <input type="text" name="numero" value="<%= endereco.numero || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none font-bold">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Bairro</label>
+                        <input type="text" id="bairro" name="bairro" value="<%= endereco.bairro || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none">
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Cidade</label>
+                        <input type="text" id="cidade" name="cidade" value="<%= endereco.cidade || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none">
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">UF</label>
+                        <input type="text" id="uf" name="uf" value="<%= endereco.uf || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none font-bold uppercase" maxlength="2">
+                    </div>
+
+                    <div class="md:col-span-4">
+                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Complemento / Ponto de Referência</label>
+                        <input type="text" name="complemento" value="<%= endereco.complemento || '' %>" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-perfil" class="aba-conteudo hidden flex flex-col md:flex-row gap-8">
+                
+                <div class="w-full md:w-1/3">
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 rounded-2xl shadow-md text-center text-white">
+                        <div class="w-24 h-24 mx-auto bg-white/20 rounded-full flex items-center justify-center text-4xl font-black border-4 border-white/30 shadow-lg mb-4">
+                            <%= dono.nome.charAt(0).toUpperCase() %>
+                        </div>
+                        <h3 class="text-xl font-bold"><%= dono.nome %></h3>
+                        <p class="text-blue-200 text-sm mt-1 uppercase tracking-wider font-semibold">Administrador</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3">
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-4 mb-6">Dados Pessoais e Acesso</h4>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Seu Nome Completo</label>
+                                <input type="text" name="dono_nome" value="<%= dono.nome %>" required class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none font-bold">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">E-mail de Login <span class="normal-case text-[10px] text-gray-400 ml-2">(Não pode ser alterado)</span></label>
+                                <input type="email" value="<%= dono.email %>" disabled class="w-full p-3 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 cursor-not-allowed font-medium">
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <h5 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4">Alterar Senha</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Nova Senha</label>
+                                        <input type="password" id="senha_nova" name="senha_nova" placeholder="Deixe em branco para não alterar" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Confirmar Nova Senha</label>
+                                        <input type="password" id="senha_confirma" placeholder="Repita a nova senha" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none">
+                                    </div>
+                                </div>
+                                <p id="erroSenha" class="text-red-500 text-xs font-bold mt-2 hidden">As senhas não coincidem!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+    <script src="/js/barbearia_admin.js"></script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

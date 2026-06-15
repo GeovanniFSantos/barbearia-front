@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Clientes - Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <style>
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-[#0f141e] text-gray-800 dark:text-gray-100 transition-colors duration-300 font-sans">
+
+    <%- include('../partials/sidebar') %>
+
+        <main class="p-4 md:p-8 max-w-7xl mx-auto w-full">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-5 animate-slide-up" <%- `style="animation-delay: 0s;"` %>>
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Carteira de Clientes</h2>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">Gerencie o relacionamento e o histórico do seu público.</p>
+                </div>
+                
+                <div class="relative w-full md:w-80 group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                        <i class="fa-solid fa-search"></i>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Buscar cliente ou telefone..." 
+                           class="w-full py-3.5 pl-11 pr-4 rounded-2xl border border-gray-200 dark:border-gray-700/60 bg-white dark:bg-gray-800/80 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm">
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700/60 overflow-hidden animate-slide-up" <%- `style="animation-delay: 0.1s;"` %>>
+                <div class="overflow-x-auto custom-scrollbar pb-2">
+                    <table class="w-full text-left min-w-[800px]" id="tabelaClientes">
+                        <thead class="bg-gray-50/50 dark:bg-gray-700/30 border-b-2 border-gray-100 dark:border-gray-700/50">
+                            <tr>
+                                <th class="py-5 px-6 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Cliente</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Última Visita</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Próximo Agendamento</th>
+                                <th class="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Contato</th>
+                                <th class="py-5 px-6 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50 dark:divide-gray-700/30">
+                            <% if (clientes.length === 0) { %>
+                                <tr>
+                                    <td colspan="5" class="py-16 text-center">
+                                        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-300 dark:text-gray-600 text-2xl">
+                                            <i class="fa-solid fa-users-slash"></i>
+                                        </div>
+                                        <p class="text-gray-400 font-bold">Você ainda não possui clientes registados.</p>
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <% clientes.forEach(c => { %>
+                                    <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/20 transition-colors cliente-row group">
+                                        
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex justify-center items-center text-lg font-black shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                                                    <%= c.nome[0].toUpperCase() %>
+                                                </div>
+                                                <div>
+                                                    <span class="block font-black text-gray-900 dark:text-white cliente-nome text-base"><%= c.nome %></span>
+                                                    <span class="text-[11px] font-bold text-gray-400 dark:text-gray-500 tracking-wider cliente-telefone"><%= c.telefone || c.email %></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="py-4 px-4">
+                                            <span class="block text-sm font-bold <%= c.ultima_visita ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 italic font-medium' %>">
+                                                <%= c.ultima_visita_formatada %>
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="py-4 px-4">
+                                            <% if (c.proxima_visita) { %>
+                                                <span class="inline-flex items-center text-xs font-black tracking-wide text-blue-700 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/50 px-3 py-1.5 rounded-lg shadow-sm">
+                                                    <i class="fa-regular fa-calendar-check mr-2 text-blue-500"></i> <%= c.proxima_visita_formatada %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="inline-flex items-center text-xs font-bold text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-3 py-1.5 rounded-lg">
+                                                    Sem agendamentos futuros
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        
+                                        <td class="py-4 px-4 text-center">
+                                            <% if(c.telefone) { %>
+                                                <a href="https://wa.me/55<%= c.telefone.replace(/\D/g, '') %>" target="_blank" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-green-50 dark:bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all hover:scale-110 hover:rotate-3 shadow-sm hover:shadow-green-500/30" title="Chamar no WhatsApp">
+                                                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                                                </a>
+                                            <% } else { %>
+                                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600">
+                                                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        
+                                        <td class="py-4 px-6 text-center">
+                                            <button onclick="abrirModalCliente('<%= c.nome %>', '<%= c.telefone_formatado %>', '<%= c.email %>', '<%= c.total_cortes %>', '<%= c.total_gasto_formatado %>', '<%= c.ultima_visita_formatada %>', '<%= c.proxima_visita_formatada %>')" 
+                                                    class="text-xs font-black bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-xl transition-all shadow-sm hover:shadow-md">
+                                                Ver Perfil
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div> 
+</div>
+
+<div id="modalCliente" class="fixed inset-0 bg-gray-900/80 backdrop-blur-md z-[9999] flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-sm mx-4 shadow-2xl transform scale-95 transition-transform duration-300 overflow-hidden border border-gray-100 dark:border-gray-700" id="modalClienteContent">
+        
+        <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative overflow-hidden text-center">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            
+            <button onclick="fecharModalCliente()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-4xl font-black mb-4 border-2 border-white/40 shadow-xl" id="modalLetra">C</div>
+            <h3 class="text-2xl font-black tracking-tight" id="modalNome">Nome do Cliente</h3>
+            <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mt-2 flex items-center justify-center gap-1.5 opacity-90">
+                <i class="fa-solid fa-phone"></i> <span id="modalTelefone"></span>
+            </p>
+        </div>
+
+        <div class="p-6 space-y-6">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm text-center">
+                    <p class="text-[9px] font-black uppercase text-gray-400 dark:text-gray-500 tracking-widest mb-1">Total de Visitas</p>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white" id="modalCortes">0</p>
+                </div>
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm text-center">
+                    <p class="text-[9px] font-black uppercase text-emerald-600 dark:text-emerald-500 tracking-widest mb-1">Total Investido</p>
+                    <p class="text-xl font-black text-emerald-600 dark:text-emerald-400 pt-1" id="modalGasto">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3.5 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <div class="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Última Visita</span>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800 dark:text-gray-200" id="modalUltima"></span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/50">
+                    <div class="flex items-center gap-3 text-blue-500">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">Próxima</span>
+                    </div>
+                    <span class="text-sm font-black text-blue-700 dark:text-blue-400" id="modalProxima"></span>
+                </div>
+            </div>
+            
+            <a id="modalBtnWhats" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 py-4 bg-green-500 hover:bg-green-400 text-white rounded-xl font-black transition-all shadow-lg shadow-green-500/30 hover:scale-[1.02] active:scale-95">
+                <i class="fa-brands fa-whatsapp text-xl"></i> Iniciar Conversa
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="/js/cliente_admin.js"></script>
+<script src="/js/theme.js"></script>
+</body>
+</html>
