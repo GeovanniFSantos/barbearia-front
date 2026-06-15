@@ -37,7 +37,7 @@
             <div class="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm font-bold border border-red-200 text-center"><i class="fa-solid fa-triangle-exclamation"></i> <%= erro %></div>
         <% } %>
 
-        <form action="/auth/redefinir-senha" method="POST" class="space-y-5" onsubmit="return validarSenhas()">
+        <form action="/barbearia-app/auth/redefinir-senha" method="POST" class="space-y-5" onsubmit="return validarSenhas()">
             <input type="hidden" name="token" value="<%= token %>">
             <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
             
@@ -91,6 +91,6 @@
             return true;
         }
     </script>
-<script src="/js/theme.js"></script>
+<script src="/barbearia-app/js/theme.js"></script>
 </body>
 </html>

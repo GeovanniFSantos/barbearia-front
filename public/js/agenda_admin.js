@@ -54,7 +54,7 @@
         btn.disabled = true;
 
         try {
-            const response = await fetch('/api/cancelar-agendamento', {
+            const response = await fetch('/barbearia-app/api/cancelar-agendamento', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ agendamentoId: id })

@@ -109,7 +109,7 @@ async function buscarHorarios() {
     btnConfirmar.innerHTML = `Aguardando seleção...`;
 
     try {
-        const response = await fetch(`/api/horarios-disponiveis?barbearia_id=${barbeariaId}&colaborador_id=${profissionalId}&servico_id=${servicoId}&data=${data}`);
+        const response = await fetch(`/barbearia-app/api/horarios-disponiveis?barbearia_id=${barbeariaId}&colaborador_id=${profissionalId}&servico_id=${servicoId}&data=${data}`);
         const json = await response.json();
 
         loading.classList.add('hidden');
@@ -199,7 +199,7 @@ async function aplicarCupom() {
     }
 
     try {
-        const response = await fetch(`/api/validar-cupom?codigo=${codigo}&barbearia_id=${barbeariaId}`);
+        const response = await fetch(`/barbearia-app/api/validar-cupom?codigo=${codigo}&barbearia_id=${barbeariaId}`);
         const data = await response.json();
 
         msg.classList.remove('hidden');
@@ -298,7 +298,7 @@ async function iniciarMercadoPago() {
             return;
         }
 
-        const response = await fetch('/api/criar-preferencia', {
+        const response = await fetch('/barbearia-app/api/criar-preferencia', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ titulo: tituloServico, preco: precoTotal, quantidade: 1, barbeariaId })
@@ -335,7 +335,7 @@ async function iniciarMercadoPago() {
                         valor_total: precoTotal
                     };
                     
-                    const resPagamento = await fetch('/api/processar-pagamento', {
+                    const resPagamento = await fetch('/barbearia-app/api/processar-pagamento', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ formData, agendamento, barbeariaId })

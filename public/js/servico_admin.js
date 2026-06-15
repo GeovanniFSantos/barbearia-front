@@ -6,7 +6,7 @@ function abrirModalEditarServico(id, nome, descricao, preco, duracao) {
     document.getElementById('edit_duracao').value = duracao;
     
     // Altera a rota do formulário para o ID correto
-    document.getElementById('formEditarServico').action = `/admin/servicos/editar/${id}`;
+    document.getElementById('formEditarServico').action = `/barbearia-app/admin/servicos/editar/${id}`;
     
     // O toggleModal agora mora globalmente no theme.js!
     toggleModal('modalEditarServico');
@@ -17,7 +17,7 @@ function abrirModalExcluirServico(id, nome) {
     document.getElementById('nomeServicoExcluir').innerText = nome;
     
     // Atualiza o link do botão vermelho para a rota correta do backend
-    document.getElementById('btnConfirmarExclusaoServico').href = `/admin/servicos/excluir/${id}`;
+    document.getElementById('btnConfirmarExclusaoServico').href = `/barbearia-app/admin/servicos/excluir/${id}`;
     
     toggleModal('modalExcluirServico');
 }

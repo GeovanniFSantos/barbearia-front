@@ -212,7 +212,7 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">Para garantir seu horário com segurança, identifique-se no sistema.</p>
             
             <div class="space-y-3">
-                <a href="/auth/login" class="flex justify-center items-center w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-blue-500/30">
+                <a href="/barbearia-app/auth/login" class="flex justify-center items-center w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-blue-500/30">
                     <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i> Fazer Login
                 </a>
                 
@@ -221,7 +221,7 @@
                     <div class="relative flex justify-center text-sm"><span class="px-2 bg-white dark:bg-gray-800 text-gray-400 font-bold uppercase tracking-wider text-[10px]">Novo Aqui?</span></div>
                 </div>
                 
-                <a href="/auth/cadastro" class="flex justify-center items-center w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-black py-4 rounded-xl transition-all shadow-sm">
+                <a href="/barbearia-app/auth/cadastro" class="flex justify-center items-center w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-black py-4 rounded-xl transition-all shadow-sm">
                     <i class="fa-solid fa-user-plus mr-2 text-sm"></i> Criar Conta Rápida
                 </a>
                 
@@ -246,7 +246,7 @@
             </div>
 
             <div class="overflow-y-auto p-6 flex-grow hide-scrollbar bg-gray-50 dark:bg-gray-900/30">
-                <form action="/agendar" method="POST" id="formAgendamento" class="space-y-6">
+                <form action="/barbearia-app/agendar" method="POST" id="formAgendamento" class="space-y-6">
                     <input type="hidden" id="inputBarbeariaId" value="<%= barbearia.id %>">
                     <input type="hidden" id="inputServicoId" name="servico_id">
                     <input type="hidden" id="inputDataHora" name="data_hora" required>
@@ -352,7 +352,7 @@
         <span class="font-black text-sm tracking-wide">Operação realizada com sucesso!</span>
     </div>
 
-<script src="/js/home_cliente.js"></script>
-<script src="/js/theme.js"></script>
+<script src="/barbearia-app/js/home_cliente.js"></script>
+<script src="/barbearia-app/js/theme.js"></script>
 </body>
 </html>

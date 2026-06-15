@@ -11,7 +11,7 @@
         }
         
         // Altera o destino do formulário para o ID específico
-        document.getElementById('formEditarColaborador').action = `/admin/colaboradores/editar/${id}`;
+        document.getElementById('formEditarColaborador').action = `/barbearia-app/admin/colaboradores/editar/${id}`;
         
         // Chama o gerenciador de modais do theme.js
         toggleModal('modalEditarColaborador');

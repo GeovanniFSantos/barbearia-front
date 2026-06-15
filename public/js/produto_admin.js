@@ -35,7 +35,7 @@
 
     // Função para preencher e abrir o modal de Editar
     function abrirModalEditarProduto(id, nome, descricao, preco, estoque, imagemUrl) {
-        document.getElementById('formEditarProduto').action = '/admin/produtos/editar/' + id;
+        document.getElementById('formEditarProduto').action = '/barbearia-app/admin/produtos/editar/' + id;
         document.getElementById('edit_nome_produto').value = nome;
         document.getElementById('edit_descricao_produto').value = descricao !== 'null' ? descricao : '';
         document.getElementById('edit_preco_produto').value = preco;
@@ -60,7 +60,7 @@
     // Função para preencher e abrir o modal de Excluir
     function abrirModalExcluirProduto(id, nome) {
         document.getElementById('nomeProdutoExcluir').textContent = nome;
-        document.getElementById('btnConfirmarExclusaoProduto').href = '/admin/produtos/excluir/' + id;
+        document.getElementById('btnConfirmarExclusaoProduto').href = '/barbearia-app/admin/produtos/excluir/' + id;
         toggleModal('modalExcluirProduto');
     }
 
