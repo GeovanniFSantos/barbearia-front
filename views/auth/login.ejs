@@ -48,7 +48,7 @@
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <label class="block text-xs uppercase font-bold text-gray-500 tracking-wider">Senha</label>
-                    <a href="/barbearia-app/auth/esqueceu-senha?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-[10px] font-bold text-blue-500 hover:text-blue-600 transition-colors">Esqueceu?</a>
+                    <a href="/barbearia-app/auth/esqueceu-senha=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-[10px] font-bold text-blue-500 hover:text-blue-600 transition-colors">Esqueceu?</a>
                 </div>
                 <div class="relative">
                     <input type="password" name="password" id="password_input" required 
@@ -84,10 +84,10 @@
         </form>
 
         <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-            Ainda não tem conta? <a href="/barbearia-app/auth/cadastro?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">Cadastre-se aqui</a>
+            Ainda não tem conta? <a href="/barbearia-app/auth/cadastro=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">Cadastre-se aqui</a>
         </div>
     </div>
-<script src="/barbearia-app/js/login.js"></script>
-<script src="/barbearia-app/js/theme.js"></script>
+<script src="/barbearia-app/public/js/login.js"></script>
+<script src="/barbearia-app/public/js/theme.js"></script>
 </body>
 </html>

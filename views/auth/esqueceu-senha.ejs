@@ -41,7 +41,7 @@
             <div class="bg-green-50 text-green-600 p-4 rounded-xl mb-6 text-sm font-bold border border-green-200">
                 <i class="fa-solid fa-circle-check text-2xl mb-2 block"></i> <%= sucesso %>
             </div>
-            <a href="/barbearia-app/auth/login?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="inline-block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white p-3.5 rounded-xl font-bold transition-all">Voltar ao Login</a>
+            <a href="/barbearia-app/auth/login=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="inline-block w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white p-3.5 rounded-xl font-bold transition-all">Voltar ao Login</a>
         <% } else { %>
             <form action="/barbearia-app/auth/esqueceu-senha" method="POST" class="space-y-5 text-left">
                 <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
@@ -55,10 +55,10 @@
                 </button>
             </form>
             <div class="mt-6 text-sm text-gray-500">
-                Lembrou da senha? <a href="/barbearia-app/auth/login?redirect=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-amber-600 font-bold hover:underline">Voltar</a>
+                Lembrou da senha? <a href="/barbearia-app/auth/login=<%= typeof redirect !== 'undefined' ? redirect : '' %>" class="text-amber-600 font-bold hover:underline">Voltar</a>
             </div>
         <% } %>
     </div>
-<script src="/barbearia-app/js/theme.js"></script>
+<script src="/barbearia-app/public/js/theme.js"></script>
 </body>
 </html>

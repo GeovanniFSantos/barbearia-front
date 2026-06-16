@@ -1,0 +1,5 @@
+www/barbearia-app/public/img/perfil/*
+!www/barbearia-app/public/img/perfil/.gitkeep
+public/img/perfil/*
+!public/img/perfil/.gitkeep
+public/img/perfil/
