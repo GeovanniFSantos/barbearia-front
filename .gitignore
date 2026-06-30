@@ -1,5 +1,8 @@
 www/barbearia-app/public/img/perfil/*
 !www/barbearia-app/public/img/perfil/.gitkeep
+www/barbearia-app/public/uploads/*
 public/img/perfil/*
 !public/img/perfil/.gitkeep
 public/img/perfil/
+public/uploads
+public/uploads/

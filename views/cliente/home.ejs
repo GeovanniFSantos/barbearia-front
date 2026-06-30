@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= barbearia.nome %> - Agendamento Inteligente</title>
+    <link rel="shortcut icon" type="imagex/png" href="./img/LogoPrincipal_Trasparente.png" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8127173362225481"
+    crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -17,6 +20,14 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-88775JZJQS"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-88775JZJQS');
+    </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300 antialiased font-sans flex flex-col min-h-screen">
 
@@ -246,7 +257,7 @@
             </div>
 
             <div class="overflow-y-auto p-6 flex-grow hide-scrollbar bg-gray-50 dark:bg-gray-900/30">
-                <form action="/barbearia-app/agendar" method="POST" id="formAgendamento" class="space-y-6">
+                <form action="/barbearia-app/barbearia/agendar" method="POST" id="formAgendamento" class="space-y-6">
                     <input type="hidden" id="inputBarbeariaId" value="<%= barbearia.id %>">
                     <input type="hidden" id="inputServicoId" name="servico_id">
                     <input type="hidden" id="inputDataHora" name="data_hora" required>
@@ -352,7 +363,9 @@
         <span class="font-black text-sm tracking-wide">Operação realizada com sucesso!</span>
     </div>
 
-<script src="/barbearia-app/public/js/home_cliente.js"></script>
-<script src="/barbearia-app/public/js/theme.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8127173362225481"
+    crossorigin="anonymous"></script>
+    <script src="/barbearia-app/public/js/home_cliente.js"></script>
+    <script src="/barbearia-app/public/js/theme.js"></script>
 </body>
 </html>
